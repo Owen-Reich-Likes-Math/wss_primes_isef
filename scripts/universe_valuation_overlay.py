@@ -1,3 +1,6 @@
+# MAIN SCRIPT!!! Generated the main graph of WSS divisibilities and the bound soaring above
+# Highly useful, very important
+
 import math
 import sys
 import time
