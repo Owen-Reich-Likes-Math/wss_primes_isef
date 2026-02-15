@@ -1,14 +1,6 @@
-#!/usr/bin/env python3
-"""wall_sun_sun_composites_safe_wss_fixed.py
-
-Patched version with these fixes:
- - Keep full WSS list while <= display_wss_limit (wss_all), otherwise keep head/tail only.
- - Create directories for HTML/CSV outputs before writing.
- - Use an iterative fast-doubling Fibonacci (reduces recursion overhead).
- - Only mark a composite as WSS when F_{idx} ≡ 0 (mod n^2) (i.e., f_mod == 0).
- - Stream WSS to CSV as discovered; keep only head/tail in memory when the list grows.
- - Return a summary dict from the main generator function (handy for programmatic checks).
-"""
+# Finds "wss composites"
+# Toy script and very early experiment
+# Unused
 
 from __future__ import annotations
 import argparse
@@ -841,3 +833,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
