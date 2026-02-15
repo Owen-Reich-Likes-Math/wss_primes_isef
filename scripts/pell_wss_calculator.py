@@ -1,3 +1,6 @@
+# Calculates the number of WSS primes in a given universe up to a bound
+# Made the heatmap results
+
 import math
 import time
 from typing import List, Tuple
@@ -170,3 +173,4 @@ if __name__ == "__main__":
         print(higher_primes)
     else:
         print("Likely all primes divide. Check though.")
+
