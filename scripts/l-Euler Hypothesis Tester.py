@@ -1,6 +1,7 @@
 # lucas_wss_euler_test.py
 # Tests whether prime exponents p from Euler-type counterexamples
 # are (P,Q)-Wall--Sun--Sun primes by checking p^2 | U_{p-(D/p)}.
+# basically checks my conjecture of connetion from other WSS primes to Euler's sum of powers
 
 from typing import List, Tuple
 import math
