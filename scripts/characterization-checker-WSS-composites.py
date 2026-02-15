@@ -1,16 +1,4 @@
-#!/usr/bin/env python3
-"""
-wss_special_forms_prompt.py
-
-Check WSS condition (F_{m - (m/5)} ≡ 0 (mod m^2)) for composite m
-drawn from two families:
-
-  A) m = 2^{4k+3} + 1   for k = 0..x
-  B) m = 2^{n} - 1       for n <= y, n ≡ 2,3,6,10,11 (mod 12)
-
-This variant prompts on the command line for x and y when they are
-not supplied as command-line arguments.
-"""
+# Unused script, checks "wss composites"
 
 from __future__ import annotations
 import argparse
@@ -288,3 +276,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
