@@ -1,3 +1,5 @@
+# Graphs the main graph overlay
+
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -203,3 +205,4 @@ ax.set_title(f"Overlay: Lucas universes P in [{P_min},{P_max}], |Q| ≤ {Q_abs_m
 ax.grid(True, which='both', linestyle=':', alpha=0.3)
 plt.tight_layout()
 plt.show()
+
