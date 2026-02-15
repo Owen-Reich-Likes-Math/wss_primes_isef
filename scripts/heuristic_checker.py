@@ -1,16 +1,6 @@
-#!/usr/bin/env python3
-"""
-lucas_expectations.py
-
-Compute and plot:
- - top heuristic: cumulative sum of 9600/(p * f^2)
- - bottom heuristic: cumulative sum of ln(|phi|)/(p * ln p)
- - actual: cumulative count of primes with p^3 | U_n, where n = p - (D/p)
-
-for odd primes p <= 200, excluding primes dividing D = P^2 - 4Q.
-
-Run: python lucas_expectations.py
-"""
+# Acts as if 9600p^2 is asymptotically correct and heuristically predicts # of WSS primes
+# Not true and comes from worse bound 9600p^2 (which comes from worse constant optimization from Bugeaud--Laurent)
+# Unused and mainly just a toy script
 
 import math
 from math import isqrt
@@ -175,3 +165,4 @@ print(f"Top expectation total (sum 9600/(p f^2)): {top_sum:.6f}")
 print(f"Bottom expectation total (sum ln(|phi|)/(p ln p)): {bottom_sum:.6f}")
 print(f"Actual count of primes with p^3 | U_n: {actual_count}")
 print("\nDone.")
+
