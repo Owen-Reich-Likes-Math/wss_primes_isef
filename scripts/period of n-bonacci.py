@@ -1,4 +1,4 @@
-
+# toy script, not used
 
 def nth_fib(n, l):
     if n <= l-1:
