@@ -1,3 +1,6 @@
+# toy random number generator, also not used
+# experiment with connections to cryptography
+
 import sys
 import random
 
