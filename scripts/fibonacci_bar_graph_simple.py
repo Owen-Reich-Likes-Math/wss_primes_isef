@@ -1,3 +1,5 @@
+# Graphs various Fibonacci bar graphs - useful script
+
 import matplotlib.pyplot as plt
 import math
 import numpy as np
