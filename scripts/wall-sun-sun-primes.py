@@ -1,36 +1,5 @@
-#!/usr/bin/env python3
-"""
-wall_sun_sun_html_report_streaming.py
-
-Streaming/scalable version of the Wall–Sun–Sun q_p analyzer.
-
-Key ideas for large bounds (millions -> billions):
- - segmented sieve to stream primes (no huge one-shot sieve)
- - reservoir sampling for visualization & tests (default sample_size=100000)
- - streaming / online aggregates for mean/std, histogram bins, correlations
- - do not store full arrays of per-prime values
- - produce a compact HTML report (embed only sampled plots + summary tables)
- - performance metrics: primes/sec, time per million, memory usage (psutil if available)
-
-WARNING: This still does heavy per-prime arithmetic (fib mod p^2). Running to
-1e9 primes or bound ~1e9 will take very long unless you parallelize or
-use specialized C libraries. This script avoids the memory/HTML blowup but
-won't make the fundamental arithmetic magically fast.
-
-Usage:
-    python wall_sun_sun_html_report_streaming.py --bound 1000000
-    python wall_sun_sun_html_report_streaming.py --bound 1000000000 --sample-size 100000 --html report-11-22-25-1000000000.html
-
-Optional performance/behavior flags:
-    --sample-size INT    reservoir sample size for plotting & sample-based tests (default 100000)
-    --bins INT           histogram bins (default 50)
-    --progress-interval  report status every N primes (default 10000)
-    --csv FILE           write sampled rows to CSV (not all primes)
-    --html FILE          output HTML filename (default auto "report-MM-DD-YY-N.html")
-    --z-threshold FLOAT  threshold for outlier zscore (default 3.0)
-    --segment-size INT   segmented sieve block size (default 1_000_000)
-    --max-primes INT     optional cap on number of primes to process (for testing)
-"""
+# makes an HTML report (I think), I don't really remember what this one does
+# not used?
 
 from __future__ import annotations
 import argparse
@@ -705,3 +674,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
