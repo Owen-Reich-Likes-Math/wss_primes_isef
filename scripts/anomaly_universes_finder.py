@@ -1,3 +1,5 @@
+# Finds universes with high divisibility - 47, 11, for example
+
 import argparse
 import time
 import numpy as np
@@ -102,3 +104,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     lb, primes = scan_universes(args.b, args.prime_limit, max_k=args.max_k, top_n=args.top_n, verbose=not args.quiet)
+
