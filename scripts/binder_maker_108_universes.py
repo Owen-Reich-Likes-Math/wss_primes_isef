@@ -1,3 +1,5 @@
+# Makes an HTML report for a universe - not used, pretty bad html formatting sometimes
+
 from sympy import primerange, legendre_symbol
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
@@ -294,3 +296,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
