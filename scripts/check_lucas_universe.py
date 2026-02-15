@@ -1,3 +1,5 @@
+# checks a single universe for a high divisibility prime
+
 import math
 import matplotlib.pyplot as plt
 
