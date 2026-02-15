@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+# Unused script, calculates fibonacci quotient (1 if WSS)
+
 from __future__ import annotations
 import argparse
 from fractions import Fraction
@@ -141,3 +142,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
