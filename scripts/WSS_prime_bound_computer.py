@@ -1,3 +1,5 @@
+# graphs the bound - simple script, unused
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -57,3 +59,4 @@ print(f"{'Prime':<10} | {'Legendre':<10} | {'Bound'}")
 for p in primes[:10]:
     leg = legendre_symbol(5, p)
     print(f"{p:<10} | {leg:<10} | {calculate_bound(p):.2f}")
+
