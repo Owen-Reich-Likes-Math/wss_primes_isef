@@ -366,6 +366,27 @@ def fib4(b, method='log', figsize=(10,6)):
 # fib3 = plot fibonacci sequence with first term with a prime colored individually
 # fib4 = plot fibonacci sequence without F0 with each prime bar for F(p - (p/5)) shown in log scale (best with b between 15 and 30)
 
-fib1(15)
-fib2(15)
-fib4(25)
+input_1 = input("Would you like to graph the Fibonacci sequence with the Binet approximation? [y/n] ")
+if input_1 == y:
+    b = int(input("To what index? "))
+    fib1(b)
+else:
+    break
+input_2 = input("Would you like to graph the Fibonacci sequence with prime factors shown? [y/n] ")
+if input_2 == y:
+    b = int(input("To what index? "))
+    fib2(b)
+else:
+    break
+input_3 = input("Would you like to graph the Fibonacci sequence with prime first traces shown? [y/n] ")
+if input_2 == y:
+    b = int(input("To what index? "))
+    fib3(b)
+else:
+    break
+input_4 = input("Would you like to graph the Fibonacci sequence with primes shown appearing in F_{p - (p|5)}? [y/n] ")
+if input_4 == y:
+    b = int(input("To what index? "))
+    fib4(b)
+else:
+    break
