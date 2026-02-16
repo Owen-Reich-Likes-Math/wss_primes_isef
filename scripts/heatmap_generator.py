@@ -1,6 +1,6 @@
 # Makes a heatmap of the number of WSS primes in the first 100,000 primes in universes
 # With P in [1, 5] and Q in [-5, 5] \ 0
-# Values symmetric across P and gets numbers from pell_wss_calculator.py
+# Values symmetric across P and gets numbers from pell_wss_calculator.py, manually inputted by me
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -140,4 +140,5 @@ ax.set_ylabel("P")
 ax.set_title("Heatmap of Number of Wall-Sun-Sun Primes up to 1000000 in Different Universes")
 plt.tight_layout()
 plt.show()
+
 
