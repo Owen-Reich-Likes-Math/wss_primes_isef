@@ -2,7 +2,6 @@
 # experiment with connections to cryptography
 
 import sys
-import random
 
 j = 3
 k = 7
