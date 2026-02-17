@@ -1,14 +1,14 @@
 # Unused script, checks "wss composites"
 
 from __future__ import annotations
+
 import argparse
 import csv
-import math
 import os
 import random
 import sys
 import time
-from typing import List, Optional, Tuple
+from typing import Tuple
 
 # ---------- Miller-Rabin probable-prime ----------
 _small_primes = [
@@ -35,7 +35,7 @@ def is_probable_prime(n: int, rounds: int = 10) -> bool:
         s += 1
 
     # deterministic bases for 64-bit integers
-    if n < 2**64:
+    if n < 2 ** 64:
         bases = [2, 325, 9375, 28178, 450775, 9780504, 1795265022]
     else:
         bases = [random.randrange(2, n - 1) for _ in range(rounds)]
@@ -123,13 +123,19 @@ def generate_family_B(y: int):
 
 # ---------- CLI & interactive prompts ----------
 def parse_args():
-    p = argparse.ArgumentParser(description="Check WSS composites on two special families of numbers (interactive prompts for x,y).")
+    p = argparse.ArgumentParser(
+        description="Check WSS composites on two special families of numbers (interactive prompts for x,y).")
     # make x,y optional; if not provided, script will prompt for them
-    p.add_argument("--x", type=int, default=None, help="Upper bound for k in family A (m = 2^{4k+3}+1). If omitted, script will prompt.")
-    p.add_argument("--y", type=int, default=None, help="Upper bound for n in family B (m = 2^n - 1). If omitted, script will prompt.")
-    p.add_argument("--max-bitlen", type=int, default=10000, help="Maximum bit-length of m to process (skip larger). Default 10000")
-    p.add_argument("--mr-rounds", type=int, default=10, help="Miller-Rabin random rounds for large integers (default 10)")
-    p.add_argument("--csv", type=str, default=None, help="Optional CSV filename to write verified WSS composites (columns: family, param, exp/n, m, idx, is_wss)")
+    p.add_argument("--x", type=int, default=None,
+                   help="Upper bound for k in family A (m = 2^{4k+3}+1). If omitted, script will prompt.")
+    p.add_argument("--y", type=int, default=None,
+                   help="Upper bound for n in family B (m = 2^n - 1). If omitted, script will prompt.")
+    p.add_argument("--max-bitlen", type=int, default=10000,
+                   help="Maximum bit-length of m to process (skip larger). Default 10000")
+    p.add_argument("--mr-rounds", type=int, default=10,
+                   help="Miller-Rabin random rounds for large integers (default 10)")
+    p.add_argument("--csv", type=str, default=None,
+                   help="Optional CSV filename to write verified WSS composites (columns: family, param, exp/n, m, idx, is_wss)")
     p.add_argument("--verbose", action="store_true", help="Verbose output")
     return p.parse_args()
 
@@ -276,4 +282,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -2,6 +2,7 @@
 
 import math
 
+
 # -------------------------
 # Basic number theory utils
 # -------------------------

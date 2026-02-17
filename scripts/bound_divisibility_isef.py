@@ -1,8 +1,7 @@
 # Graphs the main graph overlay
 
-import math
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from sympy import primerange, legendre_symbol
 
 # ---- User input ----
@@ -26,6 +25,7 @@ periodic_skip_set = {
     (2, 1), (-2, 1)
 }
 
+
 # ---- Helper functions ----
 def matrix_pow(A, n, m):
     """Compute A^n (2x2 matrix) modulo m using binary exponentiation."""
@@ -37,6 +37,7 @@ def matrix_pow(A, n, m):
         base = (base @ base) % m
         n >>= 1
     return res
+
 
 def get_raw_valuation(P, Q, p, max_k=16):
     """
@@ -75,6 +76,7 @@ def get_raw_valuation(P, Q, p, max_k=16):
             break
     return val
 
+
 # ---- Build requested universes ----
 requested_universes = [
     (P, Q)
@@ -86,6 +88,7 @@ requested_universes = [
 if not requested_universes:
     raise SystemExit("No universes to scan (maybe Q_abs_max was 0).")
 
+
 # ---- Additional filter: skip P^2 = k*Q for k in {0,1,2,3} ----
 def violates_k_relation(P, Q):
     for k in range(0, 4):
@@ -93,6 +96,7 @@ def violates_k_relation(P, Q):
         if P * P == k * Q:
             return True
     return False
+
 
 # Apply both filters (explicit periodic set + k-relation)
 filtered_universes = [
@@ -205,4 +209,3 @@ ax.set_title(f"Overlay: Lucas universes P in [{P_min},{P_max}], |Q| ≤ {Q_abs_m
 ax.grid(True, which='both', linestyle=':', alpha=0.3)
 plt.tight_layout()
 plt.show()
-

@@ -2,8 +2,8 @@
 # With P in [1, 5] and Q in [-5, 5] \ 0
 # Values symmetric across P and gets numbers from pell_wss_calculator.py, manually inputted by me
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, Normalize
 
 # -------------------------
@@ -19,6 +19,7 @@ data = np.array([
 
 x_labels = ["-5", "-4", "-3", "-2", "-1", "1", "2", "3", "4", "5"]
 y_labels = ["5", "4", "3", "2", "1"]
+
 
 # -------------------------
 # NaN-aware smoothing (SciPy if available, otherwise small NumPy fallback)
@@ -41,7 +42,7 @@ def nan_gaussian_smooth(data, sigma=1.0):
         size = 2 * radius + 1
         x = np.arange(-radius, radius + 1)
         xx, yy = np.meshgrid(x, x)
-        kernel = np.exp(-0.5 * (xx**2 + yy**2) / (sigma**2))
+        kernel = np.exp(-0.5 * (xx ** 2 + yy ** 2) / (sigma ** 2))
         kernel /= kernel.sum()
         padded_filled = np.pad(filled, pad_width=radius, mode='constant', constant_values=0.0)
         padded_mask = np.pad(mask.astype(float), pad_width=radius, mode='constant', constant_values=0.0)
@@ -49,14 +50,15 @@ def nan_gaussian_smooth(data, sigma=1.0):
         rows, cols = data.shape
         for i in range(rows):
             for j in range(cols):
-                w_f = padded_filled[i:i+size, j:j+size] * kernel
-                w_m = padded_mask[i:i+size, j:j+size] * kernel
+                w_f = padded_filled[i:i + size, j:j + size] * kernel
+                w_m = padded_mask[i:i + size, j:j + size] * kernel
                 denom = w_m.sum()
                 if denom > 0:
                     out[i, j] = w_f.sum() / denom
                 else:
                     out[i, j] = np.nan
         return out
+
 
 sigma = 1.0
 smoothed = nan_gaussian_smooth(data, sigma=sigma)
@@ -72,6 +74,8 @@ smoothed_fixed[valid_positions] = data[valid_positions]  # preserve raw center v
 # Soft black overlay creation (distance-based alpha)
 # -------------------------
 nan_mask = np.isnan(data)
+
+
 # distance transform (scipy if available)
 def distance_to_mask(mask):
     try:
@@ -85,9 +89,10 @@ def distance_to_mask(mask):
             return dist
         for i in range(rows):
             for j in range(cols):
-                dmin = np.min(np.sqrt((coords[:,0]-i)**2 + (coords[:,1]-j)**2))
-                dist[i,j] = dmin
+                dmin = np.min(np.sqrt((coords[:, 0] - i) ** 2 + (coords[:, 1] - j) ** 2))
+                dist[i, j] = dmin
         return dist
+
 
 dist_to_nan = distance_to_mask(nan_mask)
 blend_radius = 1.4
@@ -109,8 +114,10 @@ img = ax.imshow(smoothed_fixed, cmap=cmap, norm=norm, interpolation='bicubic', o
 ax.imshow(overlay, interpolation='bicubic', origin='upper', aspect='auto', zorder=3)
 
 # ticks / grid
-ax.set_xticks(np.arange(len(x_labels))); ax.set_xticklabels(x_labels)
-ax.set_yticks(np.arange(len(y_labels))); ax.set_yticklabels(y_labels)
+ax.set_xticks(np.arange(len(x_labels)));
+ax.set_xticklabels(x_labels)
+ax.set_yticks(np.arange(len(y_labels)));
+ax.set_yticklabels(y_labels)
 ax.set_xticks(np.arange(-.5, len(x_labels), 1), minor=True)
 ax.set_yticks(np.arange(-.5, len(y_labels), 1), minor=True)
 ax.grid(which='minor', color='lightgrey', linestyle='-', linewidth=0.5)
@@ -140,5 +147,3 @@ ax.set_ylabel("P")
 ax.set_title("Heatmap of Number of Wall-Sun-Sun Primes up to 1000000 in Different Universes")
 plt.tight_layout()
 plt.show()
-
-

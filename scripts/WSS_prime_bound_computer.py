@@ -1,25 +1,28 @@
 # graphs the bound - simple script, unused
 
 import matplotlib.pyplot as plt
-import numpy as np
+
 
 def legendre_symbol(a, p):
     if a % p == 0: return 0
     res = pow(a, (p - 1) // 2, p)
     return 1 if res == 1 else -1
 
+
 def calculate_bound(p):
     leg = legendre_symbol(5, p)
     exponent = 0.5 * (3 - leg)
-    numerator = 2400 * p * (p**exponent - 1)
+    numerator = 2400 * p * (p ** exponent - 1)
     denominator = p - 1
     return numerator / denominator
 
+
 def is_prime(n):
     if n < 2: return False
-    for i in range(2, int(n**0.5) + 1):
+    for i in range(2, int(n ** 0.5) + 1):
         if n % i == 0: return False
     return True
+
 
 # Generate primes up to a reasonable limit for visualization
 p_max = 500
@@ -59,4 +62,3 @@ print(f"{'Prime':<10} | {'Legendre':<10} | {'Bound'}")
 for p in primes[:10]:
     leg = legendre_symbol(5, p)
     print(f"{p:<10} | {leg:<10} | {calculate_bound(p):.2f}")
-

@@ -1,11 +1,13 @@
 # Unused script, calculates fibonacci quotient (1 if WSS)
 
 from __future__ import annotations
+
 import argparse
 from fractions import Fraction
 from math import isfinite
-import matplotlib.pyplot as plt
 from typing import List
+
+import matplotlib.pyplot as plt
 
 
 def fibonacci(n: int) -> int:
@@ -69,7 +71,8 @@ def sieve_primes(start: int, end: int) -> List[int]:
     return primes
 
 
-def compute_and_plot(start: int, end: int, save_path: str | None = None, show: bool = True, log_scale: bool = False) -> None:
+def compute_and_plot(start: int, end: int, save_path: str | None = None, show: bool = True,
+                     log_scale: bool = False) -> None:
     primes = sieve_primes(start, end)
     if not primes:
         print(f"No primes in range [{start}, {end}].")
@@ -127,9 +130,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Plot F_{p-(5/p)} / p^2 for primes in a range.")
     parser.add_argument("--start", type=int, default=2, help="Start of inclusive range (default: 2)")
     parser.add_argument("--end", type=int, default=200, help="End of inclusive range (default: 200)")
-    parser.add_argument("--save", "-s", type=str, default=None, help="Optional file path to save the figure (e.g. output.png).")
+    parser.add_argument("--save", "-s", type=str, default=None,
+                        help="Optional file path to save the figure (e.g. output.png).")
     parser.add_argument("--no-show", action="store_true", help="Do not call plt.show() (useful when saving only).")
-    parser.add_argument("--log", action="store_true", help="Plot y-axis on a log scale (helpful when values grow quickly).")
+    parser.add_argument("--log", action="store_true",
+                        help="Plot y-axis on a log scale (helpful when values grow quickly).")
     return parser.parse_args()
 
 
@@ -142,4 +147,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

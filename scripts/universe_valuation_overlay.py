@@ -1,16 +1,16 @@
 # MAIN SCRIPT!!! Generated the main graph of WSS divisibilities and the bound soaring above
 # Highly useful, very important
 
-import math
+import multiprocessing as mp
+import os
 import sys
 import time
-import numpy as np
-import matplotlib.pyplot as plt
-from sympy import primerange, legendre_symbol
 from datetime import datetime, timezone
-import os
-import multiprocessing as mp
-from functools import partial
+
+import matplotlib.pyplot as plt
+import numpy as np
+from sympy import primerange, legendre_symbol
+
 
 # matrix multiplier mod m for calculating terms
 def mat_mul_mod(A, B, m):
@@ -20,6 +20,7 @@ def mat_mul_mod(A, B, m):
         (A[2] * B[0] + A[3] * B[2]) % m,
         (A[2] * B[1] + A[3] * B[3]) % m
     )
+
 
 def get_Un_mod(P, Q, n, m):
     if n == 0: return 0
@@ -45,6 +46,7 @@ def get_Un_mod(P, Q, n, m):
         n >>= 1
     return r2
 
+
 def get_Un_int(P, Q, n):
     if n == 0: return 0
     if n == 1: return 1
@@ -65,15 +67,16 @@ def get_Un_int(P, Q, n):
         n >>= 1
     return r2
 
+
 # core logic, iterated over for every universe
 def compute_universe(args):
     P, Q = args
     xs = []
     ys = []
     anomalies = []
-    
+
     global primes_global
-    
+
     for p in primes_global:
         D = P * P - 4 * Q
 
@@ -90,8 +93,8 @@ def compute_universe(args):
             # compute int if divis by p
             u_n_int = get_Un_int(P, Q, n)
             if u_n_int == 0:
-                continue # should not happen if p > n, but safety
-            
+                continue  # should not happen if p > n, but safety
+
             val = 1
             # check higher powers
             for k in range(2, 101):
@@ -100,7 +103,7 @@ def compute_universe(args):
                     val = k
                 else:
                     break
-        
+
         if val > 0:
             xs.append(p)
             ys.append(val)
@@ -109,19 +112,21 @@ def compute_universe(args):
 
     if not xs:
         return None
-    
+
     return {
-        "P": P, 
-        "Q": Q, 
-        "primes": np.array(xs, dtype=np.int64), 
-        "vals": np.array(ys, dtype=np.int64), 
+        "P": P,
+        "Q": Q,
+        "primes": np.array(xs, dtype=np.int64),
+        "vals": np.array(ys, dtype=np.int64),
         "anoms": anomalies
     }
+
 
 # cpu workers parallel
 def init_worker(primes):
     global primes_global
     primes_global = primes
+
 
 if __name__ == '__main__':
     mp.freeze_support()
@@ -146,6 +151,7 @@ if __name__ == '__main__':
         (2, 1), (-2, 1)
     }
 
+
     def violates_k_relation(P, Q):
         P2 = P * P
         if P2 == 0: return True
@@ -153,6 +159,7 @@ if __name__ == '__main__':
         if P2 == 2 * Q: return True
         if P2 == 3 * Q: return True
         return False
+
 
     # gen universes
     requested_universes = [
@@ -169,7 +176,7 @@ if __name__ == '__main__':
         (P, Q) for (P, Q) in requested_universes
         if (P, Q) not in periodic_skip_set and not violates_k_relation(P, Q)
     ]
-    
+
     total_unis = len(filtered_universes)
     print(f"Scanning {total_unis} universes; primes up to {prime_bound}...")
 
@@ -179,23 +186,23 @@ if __name__ == '__main__':
 
     # parallel start
     all_data = []
-    
+
     # get num of cores
     num_cores = mp.cpu_count()
     print(f" utilizing {num_cores} CPU cores.")
 
     start_time = time.time()
-    
+
     # share primes
     with mp.Pool(processes=num_cores, initializer=init_worker, initargs=(primes_list,)) as pool:
         chunk_size = max(1, total_unis // (num_cores * 4))
         results_iter = pool.imap_unordered(compute_universe, filtered_universes, chunksize=chunk_size)
-        
+
         bar_width = 30
         for i, result in enumerate(results_iter):
             if result is not None:
                 all_data.append(result)
-            
+
             # prog bar
             if (i + 1) % 10 == 0 or (i + 1) == total_unis:
                 progress = (i + 1) / total_unis
@@ -209,16 +216,16 @@ if __name__ == '__main__':
     print("\nScan complete.")
 
     # plotting
-    
+
     max_val = -1
     max_indices = []
-    
+
     for i, data in enumerate(all_data):
         if data["vals"].size > 0:
             local_max = int(np.max(data["vals"]))
             if local_max > max_val:
                 max_val = local_max
-    
+
     if max_val > -1:
         for i, data in enumerate(all_data):
             if data["vals"].size > 0 and int(np.max(data["vals"])) == max_val:
@@ -241,7 +248,7 @@ if __name__ == '__main__':
     for i, data in enumerate(all_data):
         xs = data["primes"]
         ys = data["vals"]
-        
+
         color = cmap(i % cmap.N)
         is_top_universe = (i in max_indices)
 
@@ -263,7 +270,7 @@ if __name__ == '__main__':
         for (p, v) in data["anoms"]:
             anom_ps.append(p)
             anom_vs.append(v)
-            
+
     if anom_ps:
         ax.scatter(anom_ps, anom_vs, color='red', s=30, zorder=10)
 

@@ -1,9 +1,11 @@
 # Graphs various Fibonacci bar graphs - useful script
 
-import matplotlib.pyplot as plt
 import math
+
+import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
+
 
 def fib(n):
     # Use iterative approach for speed
@@ -16,6 +18,7 @@ def fib(n):
         a, b = b, a + b
     return b
 
+
 def fib1(b):
     # constants
     phi = (1 + math.sqrt(5)) / 2
@@ -26,7 +29,7 @@ def fib1(b):
 
     # continuous x for asymptotic/Binet curve
     x_cont_vals = np.arange(0, b + 0.5, 0.1)
-    y_asymp_vals = phi**x_cont_vals / math.sqrt(5)
+    y_asymp_vals = phi ** x_cont_vals / math.sqrt(5)
 
     # plot
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -35,7 +38,7 @@ def fib1(b):
 
     # annotate each bar with its Fibonacci number, placed so it does not overlap the asymptotic line
     for n, y in zip(x_vals, y_vals):
-        y_line = phi**n / math.sqrt(5)           # asymptotic value exactly at integer n
+        y_line = phi ** n / math.sqrt(5)  # asymptotic value exactly at integer n
         # vertical padding chosen relative to the larger of the two values,
         # with a small minimum so labels don't sit on top of bars for tiny numbers
         pad = max(0.10 * max(y, y_line), 0.1)
@@ -51,10 +54,12 @@ def fib1(b):
     plt.tight_layout()
     plt.show()
 
+
 def _text_contrast_color(rgba):
     r, g, b, _ = rgba
-    lum = 0.299*r + 0.587*g + 0.114*b
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
     return 'white' if lum < 0.5 else 'black'
+
 
 def fib2(b, method='log', figsize=(10, 6)):
     """
@@ -67,7 +72,7 @@ def fib2(b, method='log', figsize=(10, 6)):
     if method not in ('log', 'value'):
         raise ValueError("method must be 'log' or 'value'")
 
-    ns = list(range(b+1))
+    ns = list(range(b + 1))
     fibs = [fib(n) for n in ns]
 
     # For each Fibonacci number, get list of prime units sorted by prime ascending,
@@ -97,19 +102,19 @@ def fib2(b, method='log', figsize=(10, 6)):
             # trivial 0 or 1 bar
             plt.bar(i, F, color='lightgray', edgecolor='black')
             if F > 0:
-                plt.text(i, F/2, str(F), ha='center', va='center', fontsize=9)
+                plt.text(i, F / 2, str(F), ha='center', va='center', fontsize=9)
             continue
 
         if not units:
             plt.bar(i, F, color='lightgray', edgecolor='black')
-            plt.text(i, F/2, str(F), ha='center', va='center', fontsize=9)
+            plt.text(i, F / 2, str(F), ha='center', va='center', fontsize=9)
             continue
 
         # compute raw value per unit according to method
         if method == 'log':
-            raw_vals = [math.log(p) for p in units]          # each multiplicity unit gets log(p)
+            raw_vals = [math.log(p) for p in units]  # each multiplicity unit gets log(p)
         else:  # 'value'
-            raw_vals = [p for p in units]                    # each unit weighted by p
+            raw_vals = [p for p in units]  # each unit weighted by p
 
         sum_vals = sum(raw_vals)
         if sum_vals == 0:
@@ -128,13 +133,15 @@ def fib2(b, method='log', figsize=(10, 6)):
             txt_color = _text_contrast_color(color)
             if rel_share >= 0.08:
                 fontsize = 10
-                plt.text(i, bottom + share/2, label, ha='center', va='center', fontsize=fontsize, color=txt_color, clip_on=True)
+                plt.text(i, bottom + share / 2, label, ha='center', va='center', fontsize=fontsize, color=txt_color,
+                         clip_on=True)
             elif rel_share >= 0.03:
                 fontsize = 8
-                plt.text(i, bottom + share/2, label, ha='center', va='center', fontsize=fontsize, color=txt_color, clip_on=True)
+                plt.text(i, bottom + share / 2, label, ha='center', va='center', fontsize=fontsize, color=txt_color,
+                         clip_on=True)
             else:
                 # tiny segment: put label just above the segment to keep it readable
-                plt.text(i, bottom + share + max(0.01*F, 1e-6), label, ha='center', va='bottom', fontsize=7)
+                plt.text(i, bottom + share + max(0.01 * F, 1e-6), label, ha='center', va='bottom', fontsize=7)
             bottom += share
 
         # thin outline of the true Fibonacci value
@@ -147,6 +154,7 @@ def fib2(b, method='log', figsize=(10, 6)):
     plt.tight_layout()
     plt.show()
 
+
 def fib3(b, figsize=(10, 10), cmap=plt.cm.tab20, default_color='lightgray'):
     """
     Plot F_0..F_b where:
@@ -157,7 +165,7 @@ def fib3(b, figsize=(10, 10), cmap=plt.cm.tab20, default_color='lightgray'):
         deterministically as the smallest new prime; all new primes are annotated above the bar
     """
     # prepare sequence
-    ns = list(range(b+1))
+    ns = list(range(b + 1))
     fibs = [fib(n) for n in ns]
 
     # factor each Fibonacci number
@@ -174,7 +182,7 @@ def fib3(b, figsize=(10, 10), cmap=plt.cm.tab20, default_color='lightgray'):
     primes_ordered = sorted(first_occurrence.keys(), key=lambda p: first_occurrence[p])
     k = len(primes_ordered)
     if k > 0:
-        color_palette = cmap(np.linspace(0, 1, max(k,1)))
+        color_palette = cmap(np.linspace(0, 1, max(k, 1)))
         prime_color_map = {p: tuple(color_palette[i]) for i, p in enumerate(primes_ordered)}
     else:
         prime_color_map = {}
@@ -212,6 +220,7 @@ def fib3(b, figsize=(10, 10), cmap=plt.cm.tab20, default_color='lightgray'):
     plt.tight_layout()
     plt.show()
 
+
 def _legendre_p_over_5(p):
     # Legendre symbol (p/5): 0 if p%5==0, 1 if p%5 in {1,4}, -1 if p%5 in {2,3}
     r = p % 5
@@ -221,12 +230,14 @@ def _legendre_p_over_5(p):
         return 1
     return -1
 
+
 def _text_contrast_color(rgba):
     r, g, b, _ = rgba
-    lum = 0.299*r + 0.587*g + 0.114*b
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
     return 'white' if lum < 0.5 else 'black'
 
-def fib4(b, method='log', figsize=(10,6)):
+
+def fib4(b, method='log', figsize=(10, 6)):
     """
     Like the previous function but does NOT plot F0.
     Plots F1..Fb on a logarithmic y-axis, highlighting 'special' primes p that satisfy
@@ -241,11 +252,11 @@ def fib4(b, method='log', figsize=(10,6)):
 
     # compute Fibonacci numbers for 0..b (we need them to check divisibility),
     # but we'll only plot 1..b
-    fibs_full = [fib(n) for n in range(b+1)]
+    fibs_full = [fib(n) for n in range(b + 1)]
 
     # find special primes: p up to b+1 with idx = p - (p/5)
-    special_by_index = {n: [] for n in range(b+1)}
-    for p in sp.primerange(2, b+2):
+    special_by_index = {n: [] for n in range(b + 1)}
+    for p in sp.primerange(2, b + 2):
         leg = _legendre_p_over_5(p)
         idx = p - leg
         if 0 <= idx <= b:
@@ -253,7 +264,7 @@ def fib4(b, method='log', figsize=(10,6)):
                 special_by_index[idx].append(p)
 
     # prepare the list of indices we will plot (skip 0)
-    plotted_ns = list(range(1, b+1))
+    plotted_ns = list(range(1, b + 1))
     plotted_fibs = [fibs_full[n] for n in plotted_ns]
 
     # build unit lists for each plotted index: only units from special primes (p repeated exp times)
@@ -332,12 +343,14 @@ def fib4(b, method='log', figsize=(10,6)):
             rel_share = share / F if F > 0 else 0
             if rel_share >= 0.06:
                 fontsize = 9
-                plt.text(x, bottom + share/2, str(p), ha='center', va='center', fontsize=fontsize, color=txt_color, clip_on=True)
+                plt.text(x, bottom + share / 2, str(p), ha='center', va='center', fontsize=fontsize, color=txt_color,
+                         clip_on=True)
             elif rel_share >= 0.03:
                 fontsize = 7
-                plt.text(x, bottom + share/2, str(p), ha='center', va='center', fontsize=fontsize, color=txt_color, clip_on=True)
+                plt.text(x, bottom + share / 2, str(p), ha='center', va='center', fontsize=fontsize, color=txt_color,
+                         clip_on=True)
             else:
-                plt.text(x, bottom + share + max(0.01*F, 1e-9), str(p), ha='center', va='bottom', fontsize=7)
+                plt.text(x, bottom + share + max(0.01 * F, 1e-9), str(p), ha='center', va='bottom', fontsize=7)
             bottom += share
 
         # top 'other' aggregated segment (light gray) — draw only if positive
@@ -361,32 +374,33 @@ def fib4(b, method='log', figsize=(10,6)):
     plt.tight_layout()
     plt.show()
 
+
 # fib1 = plot fibonacci sequence
 # fib2 = plot fibonacci sequence with prime factors shown
 # fib3 = plot fibonacci sequence with first term with a prime colored individually
 # fib4 = plot fibonacci sequence without F0 with each prime bar for F(p - (p/5)) shown in log scale (best with b between 15 and 30)
 
 input_1 = input("Would you like to graph the Fibonacci sequence with the Binet approximation? [y/n] ")
-if input_1 == y:
+if input_1 == 'y':
     b = int(input("To what index? "))
     fib1(b)
 else:
-    break
+    print("Moving on. ")
 input_2 = input("Would you like to graph the Fibonacci sequence with prime factors shown? [y/n] ")
-if input_2 == y:
+if input_2 == 'y':
     b = int(input("To what index? "))
     fib2(b)
 else:
-    break
+    print("Moving on. ")
 input_3 = input("Would you like to graph the Fibonacci sequence with prime first traces shown? [y/n] ")
-if input_2 == y:
+if input_2 == 'y':
     b = int(input("To what index? "))
     fib3(b)
 else:
-    break
+    print("Moving on.")
 input_4 = input("Would you like to graph the Fibonacci sequence with primes shown appearing in F_{p - (p|5)}? [y/n] ")
-if input_4 == y:
+if input_4 == 'y':
     b = int(input("To what index? "))
     fib4(b)
 else:
-    break
+    print("Have a nice day. ")

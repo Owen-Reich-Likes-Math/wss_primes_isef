@@ -1,18 +1,19 @@
 # Makes an HTML report for a universe - not used, pretty bad html formatting sometimes
 
-from sympy import primerange, legendre_symbol
-from matplotlib.backends.backend_pdf import PdfPages
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-from matplotlib.ticker import FuncFormatter
 import argparse
 import math
-import time
 import textwrap
+import time
+
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.ticker import FuncFormatter
+from sympy import primerange, legendre_symbol
 
 # optional progress bar
 try:
     from tqdm import tqdm
+
     _use_tqdm = True
 except Exception:
     _use_tqdm = False
@@ -228,7 +229,7 @@ def generate_universe_page(P, Q, prime_limit=100000, max_k=15,
         # two-column balanced layout
         rows = math.ceil(N / 2)
         left_col = anomalies[:rows]
-        right_col = anomalies[rows:rows*2]
+        right_col = anomalies[rows:rows * 2]
         col_x = [0.01, 0.50]
         y0 = 0.92
         y_step = 0.88 / max(max(len(left_col), len(right_col), 1), rows)
@@ -256,7 +257,8 @@ def generate_universe_page(P, Q, prime_limit=100000, max_k=15,
     plt.close(fig)
 
     elapsed = time.time() - start_time
-    print(f"Saved '{filename}' — primes: {total_primes:,}, anomalies: {wss_count}, seq-zero primes: {seq_zero_count}. Elapsed {elapsed:.1f}s.")
+    print(
+        f"Saved '{filename}' — primes: {total_primes:,}, anomalies: {wss_count}, seq-zero primes: {seq_zero_count}. Elapsed {elapsed:.1f}s.")
 
 
 # ---- CLI ----
@@ -296,4 +298,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

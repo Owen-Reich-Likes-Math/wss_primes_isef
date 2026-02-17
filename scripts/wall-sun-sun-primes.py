@@ -2,6 +2,7 @@
 # not used?
 
 from __future__ import annotations
+
 import argparse
 import base64
 import csv
@@ -12,17 +13,19 @@ import sys
 import time
 from collections import defaultdict
 from datetime import datetime
-from heapq import heappush, heappushpop, nlargest
+from heapq import heappush, heappushpop
 from typing import Iterator, List, Tuple, Optional
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # Optional extras
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except Exception:
     PSUTIL_AVAILABLE = False
@@ -30,6 +33,7 @@ except Exception:
 try:
     import scipy.stats as ss
     from scipy.stats import chi2 as _chi2
+
     SCIPY_AVAILABLE = True
 except Exception:
     SCIPY_AVAILABLE = False
@@ -44,12 +48,12 @@ def simple_sieve(n: int) -> List[int]:
         return []
     sieve = bytearray(b"\x01") * (n + 1)
     sieve[0:2] = b"\x00\x00"
-    limit = int(n**0.5) + 1
+    limit = int(n ** 0.5) + 1
     for p in range(2, limit):
         if sieve[p]:
             step = p
             start = p * p
-            sieve[start:n+1:step] = b"\x00" * (((n - start) // step) + 1)
+            sieve[start:n + 1:step] = b"\x00" * (((n - start) // step) + 1)
     return [i for i, isprime in enumerate(sieve) if isprime]
 
 
@@ -145,6 +149,7 @@ def fig_to_base64_png(fig) -> str:
 # -----------------------
 class Welford:
     """Online mean/variance (population variance by default)."""
+
     def __init__(self):
         self.n = 0
         self.mean = 0.0
@@ -413,7 +418,8 @@ def generate_report_streaming(bound: int,
             if p not in outlier_by_p or abs(z) > abs(outlier_by_p[p][3]):
                 outlier_by_p[p] = (q, norm, z)
         # convert to sorted list
-        outliers_sorted = sorted([(p, q, norm, z) for p, (q, norm, z) in outlier_by_p.items()], key=lambda x: -abs(x[3]))
+        outliers_sorted = sorted([(p, q, norm, z) for p, (q, norm, z) in outlier_by_p.items()],
+                                 key=lambda x: -abs(x[3]))
     else:
         outliers_sorted = []
 
@@ -500,7 +506,8 @@ def generate_report_streaming(bound: int,
     html = []
     html.append("<!doctype html><html><head><meta charset='utf-8'>")
     html.append(f"<title>Wall–Sun–Sun q_p report (bound={bound:,})</title>")
-    html.append("<style>body{font-family:Arial,Helvetica,sans-serif;margin:18px;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:6px;}th{background:#f4f7fb;}code{font-family:monospace;}</style>")
+    html.append(
+        "<style>body{font-family:Arial,Helvetica,sans-serif;margin:18px;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:6px;}th{background:#f4f7fb;}code{font-family:monospace;}</style>")
     html.append("</head><body>")
     html.append(f"<h1>Wall–Sun–Sun q_p analysis — bound={bound:,}</h1>")
     html.append(f"<p>Generated: {now}</p>")
@@ -520,8 +527,10 @@ def generate_report_streaming(bound: int,
     html.append("<h2>Distribution & sample-based tests</h2>")
     html.append("<table>")
     html.append(f"<tr><th>Sample size used for tests/plots</th><td>{len(sample)}</td></tr>")
-    html.append(f"<tr><th>Chi-square (binned)</th><td>stat={chi2_stat:.4f}, df={chi2_df}, p={'{:.4g}'.format(chi2_p) if chi2_p is not None else 'install scipy'}</td></tr>")
-    html.append(f"<tr><th>KS (on sample)</th><td>D={'{:.6f}'.format(ks_stat) if not math.isnan(ks_stat) else 'N/A'}, p={'{:.4g}'.format(ks_p) if ks_p is not None else 'N/A'}</td></tr>")
+    html.append(
+        f"<tr><th>Chi-square (binned)</th><td>stat={chi2_stat:.4f}, df={chi2_df}, p={'{:.4g}'.format(chi2_p) if chi2_p is not None else 'install scipy'}</td></tr>")
+    html.append(
+        f"<tr><th>KS (on sample)</th><td>D={'{:.6f}'.format(ks_stat) if not math.isnan(ks_stat) else 'N/A'}, p={'{:.4g}'.format(ks_p) if ks_p is not None else 'N/A'}</td></tr>")
     html.append("</table>")
 
     html.append("<h3>Histogram (binned counts)</h3>")
@@ -529,14 +538,16 @@ def generate_report_streaming(bound: int,
     for i in range(bins):
         lo = i / bins
         hi = (i + 1) / bins
-        html.append(f"<tr><td>{i+1}</td><td>[{lo:.4f},{hi:.4f})</td><td>{bin_counts[i]:,}</td></tr>")
+        html.append(f"<tr><td>{i + 1}</td><td>[{lo:.4f},{hi:.4f})</td><td>{bin_counts[i]:,}</td></tr>")
     html.append("</table>")
 
     html.append("<div style='display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;'>")
     if images['hist']:
-        html.append(f"<div style='flex:1;min-width:360px'><h4>Histogram</h4><img src='{images['hist']}' style='max-width:100%'></div>")
+        html.append(
+            f"<div style='flex:1;min-width:360px'><h4>Histogram</h4><img src='{images['hist']}' style='max-width:100%'></div>")
     if images['qq']:
-        html.append(f"<div style='flex:1;min-width:360px'><h4>Q-Q (sample)</h4><img src='{images['qq']}' style='max-width:100%'></div>")
+        html.append(
+            f"<div style='flex:1;min-width:360px'><h4>Q-Q (sample)</h4><img src='{images['qq']}' style='max-width:100%'></div>")
     html.append("</div>")
 
     html.append("<h2>Modular & correlation summaries</h2>")
@@ -556,10 +567,10 @@ def generate_report_streaming(bound: int,
 
     html.append("<h2>Small-value & outlier summary</h2>")
     html.append("<table><tr><th>criterion</th><th>count</th><th>proportion</th></tr>")
-    html.append(f"<tr><td>q_p == 0</td><td>{count_zero:,}</td><td>{count_zero/n_processed:.6f}</td></tr>")
-    html.append(f"<tr><td>q_p &lt; 10</td><td>{count_lt_10:,}</td><td>{count_lt_10/n_processed:.6f}</td></tr>")
-    html.append(f"<tr><td>normalized &lt; {eps}</td><td>{near0:,}</td><td>{near0/n_processed:.6f}</td></tr>")
-    html.append(f"<tr><td>normalized &gt; {1-eps:.2f}</td><td>{near1:,}</td><td>{near1/n_processed:.6f}</td></tr>")
+    html.append(f"<tr><td>q_p == 0</td><td>{count_zero:,}</td><td>{count_zero / n_processed:.6f}</td></tr>")
+    html.append(f"<tr><td>q_p &lt; 10</td><td>{count_lt_10:,}</td><td>{count_lt_10 / n_processed:.6f}</td></tr>")
+    html.append(f"<tr><td>normalized &lt; {eps}</td><td>{near0:,}</td><td>{near0 / n_processed:.6f}</td></tr>")
+    html.append(f"<tr><td>normalized &gt; {1 - eps:.2f}</td><td>{near1:,}</td><td>{near1 / n_processed:.6f}</td></tr>")
     html.append("</table>")
 
     html.append("<h3>Outliers (from sample & candidates)</h3>")
@@ -587,7 +598,7 @@ def generate_report_streaming(bound: int,
     html.append("<pre style='font-family:monospace'>p,n_used,q_p,normalized</pre>")
     html.append("<pre style='font-family:monospace'>")
     for i, (p, q, norm) in enumerate(sample[:200]):
-        html.append(f"{p},{n_used if i==0 else ''},{q},{norm:.6f}")
+        html.append(f"{p},{n_used if i == 0 else ''},{q},{norm:.6f}")
     html.append("</pre>")
 
     # Save CSV of the reservoir sample if requested
@@ -603,8 +614,9 @@ def generate_report_streaming(bound: int,
             html.append(f"<p>Failed to write CSV: {e}</p>")
 
     html.append("<hr>")
-    html.append("<p style='font-size:0.9em;color:#666'>Notes: sample-based tests (KS, Q-Q, FFT) operate on a reservoir sample; "
-                "histogram & counts are exact via streaming binning. For full inferential p-values, install SciPy: <code>pip install scipy</code>.</p>")
+    html.append(
+        "<p style='font-size:0.9em;color:#666'>Notes: sample-based tests (KS, Q-Q, FFT) operate on a reservoir sample; "
+        "histogram & counts are exact via streaming binning. For full inferential p-values, install SciPy: <code>pip install scipy</code>.</p>")
     html.append("</body></html>")
 
     # Write HTML file
@@ -616,7 +628,8 @@ def generate_report_streaming(bound: int,
         print(f"Failed to write HTML: {e}")
 
     # final performance print
-    print(f"Done. Processed {n_processed:,} primes in {total_time:.3f}s — {primes_per_sec:.1f} p/s, {sec_per_million:.1f}s per million.")
+    print(
+        f"Done. Processed {n_processed:,} primes in {total_time:.3f}s — {primes_per_sec:.1f} p/s, {sec_per_million:.1f}s per million.")
 
 
 # -----------------------
@@ -625,14 +638,17 @@ def generate_report_streaming(bound: int,
 def parse_args():
     p = argparse.ArgumentParser(description="Streaming Wall–Sun–Sun q_p report (HTML, sample-based visuals, scalable)")
     p.add_argument("--bound", "-b", type=int, help="Upper bound for primes (required)")
-    p.add_argument("--sample-size", type=int, default=100_000, help="Reservoir sample size for plots/tests (default 100000)")
+    p.add_argument("--sample-size", type=int, default=100_000,
+                   help="Reservoir sample size for plots/tests (default 100000)")
     p.add_argument("--bins", type=int, default=50, help="Histogram bins (default 50)")
     p.add_argument("--html", type=str, default=None, help="Output HTML filename (default auto report-MM-DD-YY-N.html)")
     p.add_argument("--csv", type=str, default=None, help="Optional CSV filename to save reservoir sample")
-    p.add_argument("--z-threshold", type=float, default=3.0, help="Z-score threshold for outlier detection (default 3.0)")
+    p.add_argument("--z-threshold", type=float, default=3.0,
+                   help="Z-score threshold for outlier detection (default 3.0)")
     p.add_argument("--progress-interval", type=int, default=10_000, help="Report every N primes (default 10000)")
     p.add_argument("--segment-size", type=int, default=1_000_000, help="Segmented sieve block size (default 1_000_000)")
-    p.add_argument("--max-primes", type=int, default=None, help="Optional cap on number of primes to process (for testing)")
+    p.add_argument("--max-primes", type=int, default=None,
+                   help="Optional cap on number of primes to process (for testing)")
     return p.parse_args()
 
 
@@ -674,4 +690,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -3,7 +3,8 @@
 
 import math
 import time
-from typing import List, Tuple
+from typing import List
+
 
 # --------------------- Sieve to get first N primes ---------------------
 def nth_prime_upper_bound(n: int) -> int:
@@ -13,30 +14,32 @@ def nth_prime_upper_bound(n: int) -> int:
     nn = float(n)
     return int(nn * (math.log(nn) + math.log(math.log(nn)))) + 10
 
+
 def first_n_primes(n: int) -> List[int]:
     if n <= 0:
         return []
     limit = nth_prime_upper_bound(n)
     sieve = bytearray(b"\x01") * (limit + 1)
     sieve[0:2] = b"\x00\x00"
-    for i in range(2, int(limit**0.5) + 1):
+    for i in range(2, int(limit ** 0.5) + 1):
         if sieve[i]:
             step = i
             start = i * i
-            sieve[start:limit+1:step] = b"\x00" * (((limit - start) // step) + 1)
+            sieve[start:limit + 1:step] = b"\x00" * (((limit - start) // step) + 1)
     primes = [i for i, is_p in enumerate(sieve) if is_p]
     # If estimate was too small (rare for small n), extend limit
     while len(primes) < n:
         limit *= 2
         sieve = bytearray(b"\x01") * (limit + 1)
         sieve[0:2] = b"\x00\x00"
-        for i in range(2, int(limit**0.5) + 1):
+        for i in range(2, int(limit ** 0.5) + 1):
             if sieve[i]:
                 step = i
                 start = i * i
-                sieve[start:limit+1:step] = b"\x00" * (((limit - start) // step) + 1)
+                sieve[start:limit + 1:step] = b"\x00" * (((limit - start) // step) + 1)
         primes = [i for i, is_p in enumerate(sieve) if is_p]
     return primes[:n]
+
 
 # --------------------- Legendre symbol (D|p) -----------------------------
 def legendre_symbol_mod_p(a: int, p: int) -> int:
@@ -52,6 +55,7 @@ def legendre_symbol_mod_p(a: int, p: int) -> int:
     if r == p - 1:
         return -1
     return 0  # unreachable for prime p
+
 
 # --------------------- 2x2 matrix pow mod m, optimized -------------------
 def lucas_u_mod(P: int, Q: int, n: int, mod: int) -> int:
@@ -92,6 +96,7 @@ def lucas_u_mod(P: int, Q: int, n: int, mod: int) -> int:
 
     return r00 % mod
 
+
 # --------------------- Valuation using mod p and mod p^2 -----------------
 def valuation_up_to_p2(prime: int, P: int, Q: int) -> int:
     """
@@ -121,6 +126,7 @@ def valuation_up_to_p2(prime: int, P: int, Q: int) -> int:
         return 1
     return 2  # means valuation >= 2
 
+
 # --------------------- Main orchestrator --------------------------------
 def compute_prime_valuations_for_lucas(P: int, Q: int, prime_count: int, show_progress: bool = True):
     primes = first_n_primes(prime_count)
@@ -140,6 +146,7 @@ def compute_prime_valuations_for_lucas(P: int, Q: int, prime_count: int, show_pr
     print(f"Done: processed {prime_count:,} primes in {elapsed:.2f}s")
     return primes, vals, counts, elapsed
 
+
 # --------------------- Example usage ------------------------------------
 if __name__ == "__main__":
 
@@ -152,7 +159,7 @@ if __name__ == "__main__":
 
     P = int(input("Enter P: ").strip())
     Q = int(input("Enter Q: ").strip())
-    #N = int(input("How many primes to process? ").strip())
+    # N = int(input("How many primes to process? ").strip())
     N = 10000000
 
     primes, valuations, counts, elapsed = compute_prime_valuations_for_lucas(P, Q, N)
@@ -173,4 +180,3 @@ if __name__ == "__main__":
         print(higher_primes)
     else:
         print("Likely all primes divide. Check though.")
-

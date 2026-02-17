@@ -3,6 +3,7 @@
 # Unused
 
 from __future__ import annotations
+
 import argparse
 import base64
 import csv
@@ -17,14 +18,16 @@ from datetime import datetime
 from heapq import heappush, heappushpop
 from typing import Iterator, List, Optional, Tuple
 
-import numpy as np
 import matplotlib
+import numpy as np
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # Optional extras
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except Exception:
     PSUTIL_AVAILABLE = False
@@ -32,6 +35,7 @@ except Exception:
 try:
     import scipy.stats as ss
     from scipy.stats import chi2 as _chi2
+
     SCIPY_AVAILABLE = True
 except Exception:
     SCIPY_AVAILABLE = False
@@ -46,12 +50,12 @@ def simple_sieve(n: int) -> List[int]:
         return []
     sieve = bytearray(b"\x01") * (n + 1)
     sieve[0:2] = b"\x00\x00"
-    limit = int(n**0.5) + 1
+    limit = int(n ** 0.5) + 1
     for p in range(2, limit):
         if sieve[p]:
             step = p
             start = p * p
-            sieve[start:n+1:step] = b"\x00" * (((n - start) // step) + 1)
+            sieve[start:n + 1:step] = b"\x00" * (((n - start) // step) + 1)
     return [i for i, isprime in enumerate(sieve) if isprime]
 
 
@@ -162,6 +166,7 @@ def fig_to_base64_png(fig) -> str:
 # -----------------------
 class Welford:
     """Online mean/variance (population variance)."""
+
     def __init__(self):
         self.n = 0
         self.mean = 0.0
@@ -188,6 +193,7 @@ class Welford:
 
 class OnlinePearson:
     """Online Pearson components to compute correlation later."""
+
     def __init__(self):
         self.n = 0
         self.sx = 0.0
@@ -458,7 +464,8 @@ def generate_composite_report_streaming_wss(bound: int,
         ks_stat, ks_p = float('nan'), None
 
     # modular stats
-    p5_stats = {r: (p5_counts[r], (p5_sums[r] / p5_counts[r] if p5_counts[r] > 0 else float('nan'))) for r in sorted(p5_counts.keys())}
+    p5_stats = {r: (p5_counts[r], (p5_sums[r] / p5_counts[r] if p5_counts[r] > 0 else float('nan'))) for r in
+                sorted(p5_counts.keys())}
     modk_results = {k: online.result() for k, online in modk_online.items()}
     serial_r = serial_online.result()
 
@@ -478,7 +485,8 @@ def generate_composite_report_streaming_wss(bound: int,
             _, num, qv, normv, z = rec
             if num not in outlier_by_n or abs(z) > abs(outlier_by_n[num][2]):
                 outlier_by_n[num] = (qv, normv, z)
-        outliers_sorted = sorted([(num, qv, normv, z) for num, (qv, normv, z) in outlier_by_n.items()], key=lambda x: -abs(x[3]))
+        outliers_sorted = sorted([(num, qv, normv, z) for num, (qv, normv, z) in outlier_by_n.items()],
+                                 key=lambda x: -abs(x[3]))
     else:
         outliers_sorted = []
 
@@ -561,7 +569,8 @@ def generate_composite_report_streaming_wss(bound: int,
     html_parts: List[str] = []
     html_parts.append("<!doctype html><html><head><meta charset='utf-8'>")
     html_parts.append(f"<title>Composite q_n analysis report (bound={bound:,})</title>")
-    html_parts.append("<style>body{font-family:Arial,Helvetica,sans-serif;margin:18px;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:6px;}th{background:#f4f7fb;}code{font-family:monospace;}</style>")
+    html_parts.append(
+        "<style>body{font-family:Arial,Helvetica,sans-serif;margin:18px;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:6px;}th{background:#f4f7fb;}code{font-family:monospace;}</style>")
     html_parts.append("</head><body>")
     html_parts.append(f"<h1>Wall–Sun–Sun style q_n analysis — composites up to {bound:,}</h1>")
     html_parts.append(f"<p>Generated: {now}</p>")
@@ -585,7 +594,8 @@ def generate_composite_report_streaming_wss(bound: int,
             html_parts.append("</pre>")
         else:
             # partial listing: show head and tail, indicate partial
-            html_parts.append(f"<p><strong>Note:</strong> The list of verified WSS composites is large ({wss_count:,} entries). Only an excerpt is shown below.</p>")
+            html_parts.append(
+                f"<p><strong>Note:</strong> The list of verified WSS composites is large ({wss_count:,} entries). Only an excerpt is shown below.</p>")
             html_parts.append("<p><strong>First entries:</strong></p>")
             html_parts.append("<pre style='font-family:monospace;max-height:200px;overflow:auto;'>")
             html_parts.append(", ".join(str(x) for x in wss_head))
@@ -602,7 +612,8 @@ def generate_composite_report_streaming_wss(bound: int,
                 else:
                     html_parts.append("<p>Attempted to save full list to CSV but failed — check console output.</p>")
     if verification_failures:
-        html_parts.append("<p style='color:darkred'><strong>Verification failures:</strong> Some entries flagged as q==0 failed the stricter f_mod==0 check. See console/log for list.</p>")
+        html_parts.append(
+            "<p style='color:darkred'><strong>Verification failures:</strong> Some entries flagged as q==0 failed the stricter f_mod==0 check. See console/log for list.</p>")
     html_parts.append("</div>")
 
     # Performance table
@@ -621,15 +632,18 @@ def generate_composite_report_streaming_wss(bound: int,
     if warnings_count > 0:
         sample_warns = ", ".join(str(x) for x in warnings_sample)
         more = "" if warnings_count <= store_warnings_limit else f" (and {warnings_count - len(warnings_sample)} more)"
-        html_parts.append(f"<tr><th>Warnings (F mod n^2 not divisible by n)</th><td class='mono'>{sample_warns}{more}</td></tr>")
+        html_parts.append(
+            f"<tr><th>Warnings (F mod n^2 not divisible by n)</th><td class='mono'>{sample_warns}{more}</td></tr>")
     html_parts.append("</table>")
 
     # Distribution & sample-based tests
     html_parts.append("<h2>Distribution & sample-based tests</h2>")
     html_parts.append("<table>")
     html_parts.append(f"<tr><th>Sample size (reservoir)</th><td>{len(sample):,}</td></tr>")
-    html_parts.append(f"<tr><th>Chi-square (binned)</th><td>stat={chi2_stat:.4f}, df={chi2_df}, p={'{:.4g}'.format(chi2_p) if chi2_p is not None else 'install scipy'}</td></tr>")
-    html_parts.append(f"<tr><th>KS (sample)</th><td>D={'{:.6f}'.format(ks_stat) if not math.isnan(ks_stat) else 'N/A'}, p={'{:.4g}'.format(ks_p) if ks_p is not None else 'N/A'}</td></tr>")
+    html_parts.append(
+        f"<tr><th>Chi-square (binned)</th><td>stat={chi2_stat:.4f}, df={chi2_df}, p={'{:.4g}'.format(chi2_p) if chi2_p is not None else 'install scipy'}</td></tr>")
+    html_parts.append(
+        f"<tr><th>KS (sample)</th><td>D={'{:.6f}'.format(ks_stat) if not math.isnan(ks_stat) else 'N/A'}, p={'{:.4g}'.format(ks_p) if ks_p is not None else 'N/A'}</td></tr>")
     html_parts.append("</table>")
 
     # histogram table
@@ -638,14 +652,16 @@ def generate_composite_report_streaming_wss(bound: int,
     for i in range(bins):
         lo = i / bins
         hi = (i + 1) / bins
-        html_parts.append(f"<tr><td>{i+1}</td><td>[{lo:.4f},{hi:.4f})</td><td>{bin_counts[i]:,}</td></tr>")
+        html_parts.append(f"<tr><td>{i + 1}</td><td>[{lo:.4f},{hi:.4f})</td><td>{bin_counts[i]:,}</td></tr>")
     html_parts.append("</table>")
 
     html_parts.append("<div style='display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;'>")
     if images['hist']:
-        html_parts.append(f"<div style='flex:1;min-width:360px'><h4>Histogram</h4><img src='{images['hist']}' style='max-width:100%'></div>")
+        html_parts.append(
+            f"<div style='flex:1;min-width:360px'><h4>Histogram</h4><img src='{images['hist']}' style='max-width:100%'></div>")
     if images['qq']:
-        html_parts.append(f"<div style='flex:1;min-width:360px'><h4>Q-Q (sample)</h4><img src='{images['qq']}' style='max-width:100%'></div>")
+        html_parts.append(
+            f"<div style='flex:1;min-width:360px'><h4>Q-Q (sample)</h4><img src='{images['qq']}' style='max-width:100%'></div>")
     html_parts.append("</div>")
 
     # modular & correlations
@@ -666,17 +682,20 @@ def generate_composite_report_streaming_wss(bound: int,
     # outliers & small values
     html_parts.append("<h2>Small-value counts & outliers</h2>")
     html_parts.append("<table><tr><th>criterion</th><th>count</th><th>proportion</th></tr>")
-    html_parts.append(f"<tr><td>q_n == 0</td><td>{zeros:,}</td><td>{zeros/count if count>0 else 0:.6f}</td></tr>")
-    html_parts.append(f"<tr><td>q_n &lt; 10</td><td>{lt10:,}</td><td>{lt10/count if count>0 else 0:.6f}</td></tr>")
-    html_parts.append(f"<tr><td>normalized &lt; {eps}</td><td>{near0:,}</td><td>{near0/count if count>0 else 0:.6f}</td></tr>")
-    html_parts.append(f"<tr><td>normalized &gt; {1-eps:.2f}</td><td>{near1:,}</td><td>{near1/count if count>0 else 0:.6f}</td></tr>")
+    html_parts.append(f"<tr><td>q_n == 0</td><td>{zeros:,}</td><td>{zeros / count if count > 0 else 0:.6f}</td></tr>")
+    html_parts.append(f"<tr><td>q_n &lt; 10</td><td>{lt10:,}</td><td>{lt10 / count if count > 0 else 0:.6f}</td></tr>")
+    html_parts.append(
+        f"<tr><td>normalized &lt; {eps}</td><td>{near0:,}</td><td>{near0 / count if count > 0 else 0:.6f}</td></tr>")
+    html_parts.append(
+        f"<tr><td>normalized &gt; {1 - eps:.2f}</td><td>{near1:,}</td><td>{near1 / count if count > 0 else 0:.6f}</td></tr>")
     html_parts.append("</table>")
 
     html_parts.append("<h3>Outliers (sample-based)</h3>")
     if outliers_sorted:
         html_parts.append("<table><tr><th>n</th><th>q_n</th><th>normalized</th><th>zscore</th></tr>")
         for n_val, q_val, norm_val, z_val in outliers_sorted[:200]:
-            html_parts.append(f"<tr><td>{n_val:,}</td><td>{q_val:,}</td><td>{norm_val:.6f}</td><td>{z_val:.3f}</td></tr>")
+            html_parts.append(
+                f"<tr><td>{n_val:,}</td><td>{q_val:,}</td><td>{norm_val:.6f}</td><td>{z_val:.3f}</td></tr>")
         html_parts.append("</table>")
     else:
         html_parts.append("<p>(no outliers above threshold in sample)</p>")
@@ -718,7 +737,8 @@ def generate_composite_report_streaming_wss(bound: int,
             html_parts.append(f"<p>Failed to write reservoir CSV: {e}</p>")
 
     html_parts.append("<hr>")
-    html_parts.append("<p style='font-size:0.9em;color:#666'>Notes: histogram & counts are exact by streaming; sample-based tests/plots operate on a reservoir sample. For accurate inferential p-values install SciPy (<code>pip install scipy</code>). For memory usage install psutil (<code>pip install psutil</code>).</p>")
+    html_parts.append(
+        "<p style='font-size:0.9em;color:#666'>Notes: histogram & counts are exact by streaming; sample-based tests/plots operate on a reservoir sample. For accurate inferential p-values install SciPy (<code>pip install scipy</code>). For memory usage install psutil (<code>pip install psutil</code>).</p>")
     html_parts.append("</body></html>")
 
     # write HTML file
@@ -749,7 +769,8 @@ def generate_composite_report_streaming_wss(bound: int,
             # ignore
             pass
 
-    print(f"Done. Processed {count:,} composite numbers in {total_time:.3f}s — {comps_per_sec:.1f} comp/s, {sec_per_million:.1f}s per million.")
+    print(
+        f"Done. Processed {count:,} composite numbers in {total_time:.3f}s — {comps_per_sec:.1f} comp/s, {sec_per_million:.1f}s per million.")
 
     return {
         'count': count,
@@ -770,20 +791,31 @@ def generate_composite_report_streaming_wss(bound: int,
 def parse_args():
     p = argparse.ArgumentParser(description="Streaming composite q_n analysis with memory-safe WSS composite handling")
     p.add_argument("--bound", "-b", type=int, help="Upper bound for composites (required). E.g., 1_000_000")
-    p.add_argument("--sample-size", type=int, default=100_000, help="Reservoir sample size for plots/tests (default 100000)")
+    p.add_argument("--sample-size", type=int, default=100_000,
+                   help="Reservoir sample size for plots/tests (default 100000)")
     p.add_argument("--bins", type=int, default=50, help="Histogram bins (default 50)")
-    p.add_argument("--html", type=str, default=None, help="Output HTML filename (default auto report-MM-DD-YY-<bound>-composites.html)")
+    p.add_argument("--html", type=str, default=None,
+                   help="Output HTML filename (default auto report-MM-DD-YY-<bound>-composites.html)")
     p.add_argument("--csv", type=str, default=None, help="Optional CSV filename to save reservoir sample")
-    p.add_argument("--wss-csv", type=str, default=None, help="Optional CSV filename to save full WSS composites list (overrides auto name)")
-    p.add_argument("--no-wss-csv", action="store_true", help="Do not auto-save full WSS list to CSV (not recommended for large lists)")
-    p.add_argument("--display-wss-limit", type=int, default=5000, help="Embed full WSS list in HTML only if count <= this (default 5000)")
-    p.add_argument("--wss-head", type=int, default=100, help="When truncated, show this many head entries in HTML (default 100)")
-    p.add_argument("--wss-tail", type=int, default=100, help="When truncated, show this many tail entries in HTML (default 100)")
-    p.add_argument("--z-threshold", type=float, default=3.0, help="Z-score threshold for outlier detection (default 3.0)")
-    p.add_argument("--progress-interval", type=int, default=10_000, help="Report every N composites processed (default 10000)")
+    p.add_argument("--wss-csv", type=str, default=None,
+                   help="Optional CSV filename to save full WSS composites list (overrides auto name)")
+    p.add_argument("--no-wss-csv", action="store_true",
+                   help="Do not auto-save full WSS list to CSV (not recommended for large lists)")
+    p.add_argument("--display-wss-limit", type=int, default=5000,
+                   help="Embed full WSS list in HTML only if count <= this (default 5000)")
+    p.add_argument("--wss-head", type=int, default=100,
+                   help="When truncated, show this many head entries in HTML (default 100)")
+    p.add_argument("--wss-tail", type=int, default=100,
+                   help="When truncated, show this many tail entries in HTML (default 100)")
+    p.add_argument("--z-threshold", type=float, default=3.0,
+                   help="Z-score threshold for outlier detection (default 3.0)")
+    p.add_argument("--progress-interval", type=int, default=10_000,
+                   help="Report every N composites processed (default 10000)")
     p.add_argument("--segment-size", type=int, default=1_000_000, help="Segmented sieve block size (default 1_000_000)")
-    p.add_argument("--max-composites", type=int, default=None, help="Optional cap on number of composites to process (for testing)")
-    p.add_argument("--store-warnings-limit", type=int, default=1000, help="How many warning indices to store (default 1000)")
+    p.add_argument("--max-composites", type=int, default=None,
+                   help="Optional cap on number of composites to process (for testing)")
+    p.add_argument("--store-warnings-limit", type=int, default=1000,
+                   help="How many warning indices to store (default 1000)")
     return p.parse_args()
 
 
@@ -833,4 +865,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

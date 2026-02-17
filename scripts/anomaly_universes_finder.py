@@ -2,6 +2,7 @@
 
 import argparse
 import time
+
 import numpy as np
 from sympy import primerange, legendre_symbol
 
@@ -42,8 +43,8 @@ def scan_universes(b, prime_limit, max_k=5, top_n=1, verbose=True):
     total_universes = len(universe_list)
 
     if verbose:
-        print(f"Primes: {len(primes)} (3..{prime_limit-1})")
-        print(f"Universes to scan: {total_universes} (P in 1..{b}, Q in -{b//2}..{b//2})")
+        print(f"Primes: {len(primes)} (3..{prime_limit - 1})")
+        print(f"Universes to scan: {total_universes} (P in 1..{b}, Q in -{b // 2}..{b // 2})")
         print(f"max_k (valuation depth) = {max_k}")
         print("Starting scan...")
 
@@ -104,4 +105,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     lb, primes = scan_universes(args.b, args.prime_limit, max_k=args.max_k, top_n=args.top_n, verbose=not args.quiet)
-
