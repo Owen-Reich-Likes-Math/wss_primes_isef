@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
 
-
 def fib(n):
     # Use iterative approach for speed
     if n == 0:
@@ -155,7 +154,7 @@ def fib2(b, method='log', figsize=(10, 6)):
     plt.show()
 
 
-def fib3(b, figsize=(10, 10), cmap=plt.cm.tab20, default_color='lightgray'):
+def fib3(b, figsize=(10, 6), cmap=plt.cm.tab20, default_color='lightgray'):
     """
     Plot F_0..F_b where:
       - each bar is the Fibonacci number F_n (single bar per n)

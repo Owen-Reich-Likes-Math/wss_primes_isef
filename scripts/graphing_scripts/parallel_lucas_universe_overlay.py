@@ -135,14 +135,17 @@ if __name__ == '__main__':
     try:
         P_min = int(input("Enter P_min: "))
         P_max = int(input("Enter P_max (>= P_min): "))
-        Q_abs_max = int(input("Enter max |Q|: "))
+        Q_min = int(input("Enter min Q: "))
+        Q_max = int(input("Enter max Q (>= Q_min): "))
         prime_bound = int(input("Enter Prime Bound: "))
     except Exception:
-        print("Invalid input — using defaults: P_min=1, P_max=5, Q_abs_max=3, prime_bound=200")
-        P_min, P_max, Q_abs_max, prime_bound = 1, 5, 3, 200
+        print("Invalid input — using defaults: P_min=1, P_max=5, Q_min=-3, Q_max=3 prime_bound=200")
+        P_min, P_max, Q_min, Q_max, prime_bound = 1, 5, -3, 3, 200
 
     if P_max < P_min:
         P_min, P_max = P_max, P_min
+    if Q_max < Q_min:
+        Q_min, Q_max = Q_max, Q_min
 
     # periodic universes that are stupid
     periodic_skip_set = {
@@ -165,7 +168,7 @@ if __name__ == '__main__':
     requested_universes = [
         (P, Q)
         for P in range(P_min, P_max + 1)
-        for Q in range(-Q_abs_max, Q_abs_max + 1)
+        for Q in range(Q_min, Q_max + 1)
         if Q != 0
     ]
 

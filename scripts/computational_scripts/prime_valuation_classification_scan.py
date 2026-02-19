@@ -1,10 +1,14 @@
 # Calculates the number of WSS primes in a given universe up to a bound
 # Made the heatmap results
 
+# Update notes: made main functionality able to be
+
 import math
 import time
+import numpy as np
 from typing import List
-
+from collections import Counter
+import matplotlib.pyplot as plt
 
 # --------------------- Sieve to get first N primes ---------------------
 def nth_prime_upper_bound(n: int) -> int:
@@ -143,12 +147,24 @@ def compute_prime_valuations_for_lucas(P: int, Q: int, prime_count: int, show_pr
             print(f"Processed {i:,}/{prime_count:,} primes in {elapsed:.1f}s, rates: {counts}")
 
     elapsed = time.time() - start
-    print(f"Done: processed {prime_count:,} primes in {elapsed:.2f}s")
+    # print(f"Done: processed {prime_count:,} primes in {elapsed:.2f}s")
     return primes, vals, counts, elapsed
 
 
 # --------------------- Example usage ------------------------------------
-if __name__ == "__main__":
+
+print("Welcome to 'prime_valuation_classification_scan.py', a Python script from Owen Reich's ISEF project on Wall--Sun--Sun primes. ")
+print()
+
+print("Functionality 1: scans a single Lucas universe and returns the amount of WSS primes in it. ")
+print()
+print("Functionality 2: scans Lucas universes in a window and returns the average # of WSS primes, frequency of primes, and best universe. ")
+print("Graphs the frequency of primes against the heuristic frequency of 1/p and computes the constant for which O(1/p) is most accurate. ")
+print()
+
+response = input("Enter which functionality you'd like [1/2/q]: ")
+
+if response == "1":
 
     print("Lucas sequence valuation experiment")
     print("U_n = P*U_{n-1} - Q*U_{n-2}")
@@ -160,7 +176,7 @@ if __name__ == "__main__":
     P = int(input("Enter P: ").strip())
     Q = int(input("Enter Q: ").strip())
     # N = int(input("How many primes to process? ").strip())
-    N = 10000000
+    N = 50000000
 
     primes, valuations, counts, elapsed = compute_prime_valuations_for_lucas(P, Q, N)
 
@@ -180,3 +196,114 @@ if __name__ == "__main__":
         print(higher_primes)
     else:
         print("Likely all primes divide. Check though.")
+
+elif response == "2":
+
+    print("Lucas sequence valuation experiment")
+    print("U_n = P*U_{n-1} - Q*U_{n-2}")
+    print("Examples:")
+    print("  Pell:       P=2, Q=-1")
+    print("  Fibonacci:  P=1, Q=-1")
+    print()
+
+    P_min = int(input("Enter P minimum: ").strip())
+    P_max = int(input("Enter P maximum: ").strip())
+    Q_min = int(input("Enter Q minimum: ").strip())
+    Q_max = int(input("Enter Q maximum: ").strip())
+    N = int(input("How many primes to process? ").strip())
+
+    if P_max < P_min:
+        P_max, P_min = P_min, P_max
+    if Q_max < Q_min:
+        Q_max, Q_min = Q_min, Q_max
+
+    a = 0
+    a_max = 0
+    prime_frequency = Counter()
+
+    degenerate_universes = [(0, -1), (0, 1), (1, 1), (-1, 1), (2, 1), (-2, 1)]
+    for p in range(P_min, P_max + 1):
+        for q in range(Q_min, Q_max + 1):
+            for k in range(0, 4):
+                if p * p == k * q:
+                    degenerate_universes.append((p, q))
+
+
+    for p in range(P_min, P_max + 1):
+        for q in range(Q_min, Q_max + 1):
+            if (p, q) in degenerate_universes:
+                # print(f"Universe P = {p}, Q = {q} is degenerate. ")
+                continue
+            else:
+                primes, valuations, counts, elapsed = compute_prime_valuations_for_lucas(p, q, N)
+
+                n = len(primes)
+                first_count = counts[1]
+                higher_count = counts[2]
+
+                higher_primes = [a for a, v in zip(primes, valuations) if (v >= 2 and (not (p % a == 0 and q % a == 0)) and a > 2 and a != (p**2 - 4*q))]
+
+                prime_frequency.update(higher_primes)
+
+                # print(f"P={p}, Q={q}: {higher_primes}")
+                if q == Q_max:
+                    print(f"{p} / {P_max} done. ")
+                a += len(higher_primes)
+
+                if len(higher_primes) > a_max:
+                    a_max = len(higher_primes)
+                    P_highest = p
+                    Q_highest = q
+
+    if prime_frequency:
+        # most_common(1) returns a list like [(prime, count)]
+        most_common_prime, total_occurrences = prime_frequency.most_common(1)[0]
+
+        print()
+        print(f"MOST FREQUENT PRIME: {most_common_prime}")
+        print(f"Total occurrences across all universes: {total_occurrences}")
+        print()
+
+        if prime_frequency:
+            # 1. Prepare data as numpy arrays
+            x_data = np.array(sorted(prime_frequency.keys()), dtype=float)
+            y_data = np.array([prime_frequency[p] / ((P_max - P_min + 1)*(Q_max - Q_min + 1)) for p in x_data], dtype=float)
+
+            # 2. Calculate the optimal constant c
+            # We use the formula for a linear regression through the origin (y = c * X)
+            # where X = 1/x
+            inv_x = 1.0 / x_data
+            c = np.sum(y_data * inv_x) / np.sum(inv_x ** 2)
+
+            print(f"Calculated constant c: {c:.4f}")
+            print(f"Heuristic model: f(p) = {c:.2f} / p")
+
+            # 3. Set up the plot
+            plt.figure(figsize=(10, 6))
+            plt.scatter(x_data, y_data, color='blue', label='Observed Frequencies', alpha=0.6)
+
+            # 4. Generate points for the regression line
+            # We create a smooth range of x-values for the curve
+            x_smooth = np.linspace(x_data.min(), x_data.max(), 500)
+            y_smooth = c / x_smooth
+
+            plt.plot(x_smooth, y_smooth, color='red', linewidth=2,
+                     label=f'Best Fit: {c:.2f}/x')
+
+            plt.title("WSS Prime Frequency with $1/x$ Regression")
+            plt.xlabel("Prime Size ($p$)")
+            plt.ylabel("Total Occurrences")
+            plt.legend()
+            plt.grid(True, which="both", ls="-", alpha=0.3)
+            plt.show()
+
+    else:
+        print("\nNo WSS primes were found in the given range.")
+
+    print(f"The average number of WSS primes up to the {N}th prime in Lucas sequences with P in [{P_min}, {P_max}] and Q in [{Q_min}, {Q_max}] is: {a / ((P_max - P_min + 1)*(Q_max - Q_min + 1))}")
+    print(f"The universe with the most WSS primes found was P = {P_highest}, Q = {Q_highest}, with {a_max} WSS primes observed. ")
+
+elif response == "q":
+    print("Quitting program. Have a nice day. ")
+else:
+    print("Invalid input. Have a nice day. ")
