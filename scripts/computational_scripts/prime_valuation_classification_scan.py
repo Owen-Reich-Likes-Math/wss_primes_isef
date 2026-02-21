@@ -5,10 +5,12 @@
 
 import math
 import time
-import numpy as np
-from typing import List
 from collections import Counter
+from typing import List
+
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 # --------------------- Sieve to get first N primes ---------------------
 def nth_prime_upper_bound(n: int) -> int:
@@ -153,13 +155,16 @@ def compute_prime_valuations_for_lucas(P: int, Q: int, prime_count: int, show_pr
 
 # --------------------- Example usage ------------------------------------
 
-print("Welcome to 'prime_valuation_classification_scan.py', a Python script from Owen Reich's ISEF project on Wall--Sun--Sun primes. ")
+print(
+    "Welcome to 'prime_valuation_classification_scan.py', a Python script from Owen Reich's ISEF project on Wall--Sun--Sun primes. ")
 print()
 
 print("Functionality 1: scans a single Lucas universe and returns the amount of WSS primes in it. ")
 print()
-print("Functionality 2: scans Lucas universes in a window and returns the average # of WSS primes, frequency of primes, and best universe. ")
-print("Graphs the frequency of primes against the heuristic frequency of 1/p and computes the constant for which O(1/p) is most accurate. ")
+print(
+    "Functionality 2: scans Lucas universes in a window and returns the average # of WSS primes, frequency of primes, and best universe. ")
+print(
+    "Graphs the frequency of primes against the heuristic frequency of 1/p and computes the constant for which O(1/p) is most accurate. ")
 print()
 
 response = input("Enter which functionality you'd like [1/2/q]: ")
@@ -175,8 +180,8 @@ if response == "1":
 
     P = int(input("Enter P: ").strip())
     Q = int(input("Enter Q: ").strip())
-    # N = int(input("How many primes to process? ").strip())
-    N = 50000000
+    N = int(input("How many primes to process? ").strip())
+    # N = 50000000
 
     primes, valuations, counts, elapsed = compute_prime_valuations_for_lucas(P, Q, N)
 
@@ -228,7 +233,6 @@ elif response == "2":
                 if p * p == k * q:
                     degenerate_universes.append((p, q))
 
-
     for p in range(P_min, P_max + 1):
         for q in range(Q_min, Q_max + 1):
             if (p, q) in degenerate_universes:
@@ -241,13 +245,14 @@ elif response == "2":
                 first_count = counts[1]
                 higher_count = counts[2]
 
-                higher_primes = [a for a, v in zip(primes, valuations) if (v >= 2 and (not (p % a == 0 and q % a == 0)) and a > 2 and a != (p**2 - 4*q))]
+                higher_primes = [a for a, v in zip(primes, valuations) if
+                                 (v >= 2 and (not (p % a == 0 and q % a == 0)) and a > 2 and a != (p ** 2 - 4 * q))]
 
                 prime_frequency.update(higher_primes)
 
                 # print(f"P={p}, Q={q}: {higher_primes}")
                 if q == Q_max:
-                    print(f"{p} / {P_max} done. ")
+                    print(f"{p - P_min + 1} / {P_max - P_min + 1} done. ")
                 a += len(higher_primes)
 
                 if len(higher_primes) > a_max:
@@ -265,9 +270,13 @@ elif response == "2":
         print()
 
         if prime_frequency:
+            plt.style.use('dark_background')
+
             # 1. Prepare data as numpy arrays
             x_data = np.array(sorted(prime_frequency.keys()), dtype=float)
-            y_data = np.array([prime_frequency[p] / ((P_max - P_min + 1)*(Q_max - Q_min + 1)) for p in x_data], dtype=float)
+            y_data = np.array(
+                [prime_frequency[p] / ((P_max - P_min + 1) * (Q_max - Q_min + 1) - len(degenerate_universes)) for p in
+                 x_data], dtype=float)
 
             # 2. Calculate the optimal constant c
             # We use the formula for a linear regression through the origin (y = c * X)
@@ -280,7 +289,7 @@ elif response == "2":
 
             # 3. Set up the plot
             plt.figure(figsize=(10, 6))
-            plt.scatter(x_data, y_data, color='blue', label='Observed Frequencies', alpha=0.6)
+            plt.scatter(x_data, y_data, color='lightblue', label='Observed Frequencies', alpha=0.6)
 
             # 4. Generate points for the regression line
             # We create a smooth range of x-values for the curve
@@ -300,8 +309,10 @@ elif response == "2":
     else:
         print("\nNo WSS primes were found in the given range.")
 
-    print(f"The average number of WSS primes up to the {N}th prime in Lucas sequences with P in [{P_min}, {P_max}] and Q in [{Q_min}, {Q_max}] is: {a / ((P_max - P_min + 1)*(Q_max - Q_min + 1))}")
-    print(f"The universe with the most WSS primes found was P = {P_highest}, Q = {Q_highest}, with {a_max} WSS primes observed. ")
+    print(
+        f"The average number of WSS primes up to the {N}th prime in Lucas sequences with P in [{P_min}, {P_max}] and Q in [{Q_min}, {Q_max}] is: {a / ((P_max - P_min + 1) * (Q_max - Q_min + 1) - len(degenerate_universes))}")
+    print(
+        f"The universe with the most WSS primes found was P = {P_highest}, Q = {Q_highest}, with {a_max} WSS primes observed. ")
 
 elif response == "q":
     print("Quitting program. Have a nice day. ")
